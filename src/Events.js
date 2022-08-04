@@ -3,14 +3,33 @@ import Login from "./GoogleLogin";
 import Logout from "./GoogleLogout";
 import { useHistory } from "react-router-dom";
 import { gapi } from "gapi-script";
+import axios from "axios";
 
 const clientId =
   "1036153118460-6p711aklh70kj0he6n7b7rmjeoa7ui86.apps.googleusercontent.com";
 
-const Events = (props) => {
+const Events = () => {
   const history = useHistory();
   const [filterLocation, setFilterLocation] = useState("All");
   const [filterCategory, setFilterCategory] = useState("All");
+  const [events, setEvents] = useState([]);
+
+  console.log(events);
+  useEffect(() => {
+    const getEvents = async () => {
+      try {
+        const response = await axios.get(
+          `https://allevents-358319-default-rtdb.firebaseio.com/eventdetails.json`
+        );
+
+        setEvents(Object.values(response.data));
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getEvents();
+  }, []);
 
   useEffect(() => {
     function start() {
@@ -49,7 +68,7 @@ const Events = (props) => {
     setFilterCategory(event.target.value);
   };
 
-  const locationFilter = props.events.filter((event) => {
+  const locationFilter = events.filter((event) => {
     if (filterLocation === "All") {
       return event;
     } else if (event.location === filterLocation) {
@@ -59,7 +78,7 @@ const Events = (props) => {
     }
   });
 
-  const categoryFilter = props.events.filter((event) => {
+  const categoryFilter = events.filter((event) => {
     if (filterCategory === "All") {
       return event;
     } else if (event.category === filterCategory) {

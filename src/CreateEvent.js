@@ -1,7 +1,8 @@
 import { useRef } from "react";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
 
-const CreateEvent = (props) => {
+const CreateEvent = () => {
   const history = useHistory();
   const eventNameInputRef = useRef();
   const startTimeInputRef = useRef();
@@ -10,7 +11,7 @@ const CreateEvent = (props) => {
   const descriptionInputRef = useRef();
   const categoryInputRef = useRef();
 
-  const onAddEventHandler = (e) => {
+  const onAddEventHandler = async (e) => {
     e.preventDefault();
 
     const eventName = eventNameInputRef.current.value;
@@ -20,7 +21,7 @@ const CreateEvent = (props) => {
     const description = descriptionInputRef.current.value;
     const category = categoryInputRef.current.value;
 
-    console.log(eventName)
+    console.log(eventName);
     const eventObj = {
       name: eventName,
       startTime,
@@ -28,13 +29,20 @@ const CreateEvent = (props) => {
       location,
       description,
       category,
+      img: "https://thumbs.dreamstime.com/b/beautiful-rain-forest-ang-ka-nature-trail-doi-inthanon-national-park-thailand-36703721.jpg"
     };
 
-    console.log(eventObj)
+    try {
+      const response = await axios.post(
+        `https://allevents-358319-default-rtdb.firebaseio.com/eventdetails.json`,
+        eventObj
+      );
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
 
-    props.props(eventObj);
-
-    history.replace("/home")
+    history.replace("/home");
   };
   return (
     <>
